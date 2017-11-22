@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>pageNav_demo</title>
+        <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+        <link rel="stylesheet" type="text/css" href="css/pageNav.css" />
+        <script src="js/jquery-3.1.1.min.js" type="text/javascript"></script>
+        <script src="js/pageNav.js" type="text/javascript"></script>
+        <style type="text/css">
+            .main-container{
+                text-align: center;
+            }
+            ol{
+                list-style: none;
+            }
+            p{
+                padding-left: 20px;
+            }
+            .test-box{
+                padding-left: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h2>Page Navigator</h2>
+            <h4>Usage</h4>
+        </header>
+        <p>
+            pageNav.css <br />
+            jquery <br />
+            pageNav.js <br />
+            将上述3个文件依次引入<br />
+            复制nav的html结构至你的页面中，并给与id<br />
+            初始化翻页导航:<br>
+            <code>
+                pageNavCreate(id,pageCountNum,targetPageNum,pageNavFunc);<br>
+                /*
+                    id: 翻页文件容器nav的id;<br />
+                    pageCountNum: 总页数;<br />
+                    targetPageNum: 目标页数;<br />
+                    pageNavFunc: 翻页事件触发后的回调函数,函数中将传入一个targetPage值,回调函数内最后需要更新一遍翻页导航条;<br />
+                    以上四个皆为必须传入的项
+                */<br />
+            </code>
+
+        </p>
+        <div class="test-box">
+            <p>pageCountNum:<input type="text" value="200" id="testPageCount"></p>
+            <p>targetPageNum:<input type="text" value="1" id="testTargetCount"></p>
+            <p><input type="button" value="submit"/ id="testBtn"></p>
+        </div>
+        <div class="main-container">
+            <ol>
+                <li>1. listItem</li>
+                <li>2. listItem</li>
+                <li>3. listItem</li>
+                <li>4. listItem</li>
+                <li>5. listItem</li>
+                <li>6. listItem</li>
+                <li>7. listItem</li>
+                <li>8. listItem</li>
+                <li>9. listItem</li>
+            </ol>
+        </div>
+        <footer>
+            <nav aria-label="Page navigation" class="page-nav-outer" id="PageNav">
+                <div class="page-nav-inner clearfloat">
+                    <ul class="pagination">
+                        <!-- <li class="page-nav-Prev">
+                          <a href="javascript:void(null)" aria-label="Previous" pagenum="1" >
+                            <span aria-hidden="true">&laquo;</span>
+                          </a>
+                        </li>
+                        <li class="active pageNum" ><a href="javascript:void(null)"  pagenum="1" >1</a></li>
+                        <li class="pageNum"><a href="javascript:void(null)" pagenum="2" >2</a></li>
+                        <li class="pageNum"><a href="javascript:void(null)" pagenum="3" >3</a></li>
+                        <li class="pageNum"><a href="javascript:void(null)" pagenum="4" >4</a></li>
+                        <li class="pageNum"><a href="javascript:void(null)" pagenum="5" >5</a></li>
+                        <li class="disabled">
+                            <a href="javascript:void(null)">...</a>
+                        </li>
+                        <li class="page-nav-Next">
+                          <a href="javascript:void(null)" aria-label="Next"  pagenum="" >
+                            <span aria-hidden="true">&raquo;</span>
+                          </a>
+                        </li> -->
+                    </ul>
+                    <div class="page-input-box">
+                        <input type="text" values=""/>
+                        <button>Go</button>
+                    </div>
+                </div>
+            </nav>
+        </footer>
+    </body>
+    <script type="text/javascript">
+        jQuery(document).ready(function($) {
+            //初始化
+            pageNavCreate("PageNav",200,1,pageNavFunc);
+        });
+
+        //翻页按钮点击后触发的回调函数
+        function pageNavFunc(targetPage){
+            //targetPage是目标页码
+            console.log(targetPage);
+            /*一般来说可以在这里通过targerPage,执行AJAX请求取数来重写页面*/
+
+            /*本页用,自用需删除 Start*/
+            var pageCount = getPageCount();
+            /*本页用,自用需删除 End*/
+
+            //最后别忘了更新一遍翻页导航栏
+            pageNavCreate("PageNav",pageCount,targetPage,pageNavFunc);
+        }
+
+
+
+        //本示例页的一些js
+        jQuery(document).ready(function($) {
+            $("#testBtn").click(function(event) {
+                var targetPage = parseInt($("#testTargetCount").val());
+                var pageCount = parseInt($("#testPageCount").val());
+                if(!isNaN(targetPage) && !isNaN(pageCount)){
+                    pageNavCreate("PageNav",pageCount,targetPage,pageNavFunc);
+                }
+            });
+            $(".test-box input").keydown(function(event) {
+                if(event.which == 13){
+                    var targetPage = parseInt($("#testTargetCount").val());
+                    var pageCount = parseInt($("#testPageCount").val());
+                    if(!isNaN(targetPage) && !isNaN(pageCount)){
+                        pageNavCreate("PageNav",pageCount,targetPage,pageNavFunc);
+                    }
+                }
+            });
+        });
+        //本示例页的一些js
+        function getPageCount(){
+            if($("#testPageCount").val() && !isNaN(parseInt($("#testPageCount").val()))){
+                var pageCount = parseInt($("#testPageCount").val());
+                return pageCount;
+            }else{
+                var pageCount = parseInt($(".page-input-box > input").attr("placeholder"));
+                return pageCount;
+            }
+        }
+        
+    </script>
+</html>
