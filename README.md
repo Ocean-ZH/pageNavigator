@@ -1,4 +1,3 @@
 # pageNavigator
 
-Usage
-<a>https://ocean-zh.github.io/pageNavigator/pageNav.html</a>
+<a href="https://ocean-zh.github.io/pageNavigator/pageNav.html" target="_blank">Usage</a>
