@@ -114,7 +114,7 @@ function pageNavCreate(id,pageCountNum,targetPageNum,pageNavFunc){
         var inputVal = parseInt($(this).siblings('input').val());
         var inputMax = parseInt($(this).siblings('input').attr("max"));
         console.log("button = "+inputVal);
-        if(inputVal && inputVal<inputMax){
+        if(inputVal && inputVal<=inputMax){
             //翻页按钮点击后触发的回调函数
             pageNavFunc(inputVal);
         }else{
@@ -126,7 +126,7 @@ function pageNavCreate(id,pageCountNum,targetPageNum,pageNavFunc){
             var inputVal = parseInt($(this).val());
             var inputMax = parseInt($(this).attr("max"));
             console.log("input = "+inputVal);
-            if(inputVal && inputVal<inputMax){
+            if(inputVal && inputVal<=inputMax){
                 //翻页事件触发的回调函数
                 pageNavFunc(inputVal);
             }else{
