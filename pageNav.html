@@ -36,18 +36,19 @@
             <code>&lt;nav aria-label="Page navigation" class="page-nav-outer" id="PageNavId"&gt;&lt;/nav&gt;</code><br />
             初始化翻页导航:<br />
             <code>
-                pageNav = new PageNavCreate("PageNavId",{
+                var pageNavObj = null;//用于储存分页对象<br />
+                pageNavObj = new PageNavCreate("PageNavId",{
                     pageCount:30,
                     currentPage:1,
                     perPageNum:5,
                 });<br />
-                pageNav.afterClick(pageNavCallBack);<br /><br />
+                pageNavObj.afterClick(pageNavCallBack);<br /><br />
                 /*<br />
                     PageNavId://盒子的id名<br />
                     pageCount://总页数<br />
                     currentPage://当前页<br />
                     perPageNum://每页按钮数(非必须,默认5)<br />
-                    pageNav.afterClick()内传入一个在点击按钮后调用的回调函数，回调函数中将会传入当前点击的页码值;<br />
+                    pageNavObj.afterClick()内传入一个在点击按钮后调用的回调函数，回调函数中将会传入当前点击的页码值;<br />
                 */<br />
             </code>
 
