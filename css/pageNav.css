@@ -94,45 +94,45 @@ nav.page-nav-outer .page-input-box button {
 
 /*----------Dark Style Start----------*/
 
-/* nav.page-nav-outer {
+nav.page-nav-outer.dark {
   text-align: center;
 }
-nav.page-nav-outer .page-nav-inner {
+nav.page-nav-outer.dark .page-nav-inner {
   display: inline-block;
 }
-nav.page-nav-outer .pagination {
+nav.page-nav-outer.dark .pagination {
   margin-top: 15px;
   margin-bottom: 15px;
   display: inline-block;
   float: left;
 }
-nav.page-nav-outer .pagination > li > a {
+nav.page-nav-outer.dark .pagination > li > a {
   color: #FFF;
   font-weight: bold;
   background-color: rgba(0, 0, 0, 0.15);
   border-color: rgba(131, 233, 255, 0.75);
 }
-nav.page-nav-outer .pagination > li a:hover {
+nav.page-nav-outer.dark .pagination > li a:hover {
   background-color: rgba(90, 255, 200, 0.5);
 }
-nav.page-nav-outer .pagination > .active > a {
+nav.page-nav-outer.dark .pagination > .active > a {
   color: #FFEB3B;
   border-color: #FFEB3B;
 }
-nav.page-nav-outer .pagination > .active > a:focus {
+nav.page-nav-outer.dark .pagination > .active > a:focus {
   background-color: rgba(90, 255, 200, 0.5);
 }
-nav.page-nav-outer .pagination > .disabled > a {
+nav.page-nav-outer.dark .pagination > .disabled > a {
   color: #fff;
   border-color: rgba(131, 233, 255, 0.75);
 }
-nav.page-nav-outer .pagination > .disabled > a:focus {
+nav.page-nav-outer.dark .pagination > .disabled > a:focus {
   background-color: rgba(0, 0, 0, 0.15);
 }
-nav.page-nav-outer .pagination > .disabled a:hover {
+nav.page-nav-outer.dark .pagination > .disabled a:hover {
   background-color: rgba(0, 0, 0, 0.15);
 }
-nav.page-nav-outer .page-input-box {
+nav.page-nav-outer.dark .page-input-box {
   display: inline-block;
   border-radius: 4px;
   margin: 0;
@@ -140,16 +140,16 @@ nav.page-nav-outer .page-input-box {
   margin-left: 15px;
   float: left;
 }
-nav.page-nav-outer .page-input-box input {
+nav.page-nav-outer.dark .page-input-box input {
   width: 40px;
   padding: 4px 4px;
   box-sizing: border-box;
   color: #333;
 }
-nav.page-nav-outer .page-input-box button {
+nav.page-nav-outer.dark .page-input-box button {
   padding: 3px 5px;
 }
-button.btn-green {
+.dark button.btn-green {
   padding: 3px 15px;
   text-decoration: none;
   outline: none;
@@ -157,12 +157,12 @@ button.btn-green {
   background: rgba(144, 255, 146, 0.6);
   cursor: pointer;
 }
-button.btn-green:hover {
+.dark button.btn-green:hover {
   color: #ffd600;
   text-decoration: none;
 }
-button.btn-green:active {
+.dark button.btn-green:active {
   background: rgba(144, 255, 146, 0.4);
-} */
+}
 
 /*----------Dark Style End----------*/

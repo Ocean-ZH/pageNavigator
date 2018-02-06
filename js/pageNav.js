@@ -1,148 +1,9 @@
-function pageNavCreate(id,pageCountNum,targetPageNum,pageNavFunc){
-    var pageCount = pageCountNum;
-    var targetPage = targetPageNum;
-    var pageNav = document.getElementById(id);
-    $(pageNav).html("");
-    $('<div class="page-nav-inner clearfloat">'+
-                    '<ul class="pagination">'+
-                    '</ul>'+
-                    '<div class="page-input-box">'+
-                        '<input type="text" values=""/>'+
-                        '<button>Go</button>'+
-                    '</div>'+
-                '</div>').appendTo($(pageNav));
-    var pageNavUl =  $(pageNav).find("ul.pagination");
-    var pageNavInput = $(pageNav).find(".page-input-box");
-    
-    //总页数写入placeholder
-    pageNavInput.children('input').val("").attr({"placeholder":pageCount,"max":pageCount});
-
-    //若是总页数小于5
-    if(pageCount<=5){
-        pageNavUl.html("");
-        $('<li class="page-nav-Prev">'+
-              '<a href="javascript:void(null)" aria-label="Previous" pagenum="1" >'+
-                '<span aria-hidden="true">&laquo;</span>'+
-              '</a>'+
-            '</li>').appendTo(pageNavUl);
-
-        for(var i =1; i<=pageCount; i++){
-            $('<li class="pageNum" ><a href="javascript:void(null)"  pagenum="'+i+'" >'+i+'</a></li>').appendTo(pageNavUl);
-            if(i == targetPage){
-                pageNavUl.children("li.pageNum").last().addClass('active');
-            }
-        }
-
-        $('<li class="page-nav-Next">'+
-              '<a href="javascript:void(null)" aria-label="Next"  pagenum="'+pageCount+'" >'+
-                '<span aria-hidden="true">&raquo;</span>'+
-              '</a>'+
-            '</li>').appendTo(pageNavUl);
-    }else{//总页数大于5
-        //重写一遍5个翻页按钮 START
-        pageNavUl.html("");
-        $('<li class="page-nav-Prev">'+
-              '<a href="javascript:void(null)" aria-label="Previous" pagenum="1" >'+
-                '<span aria-hidden="true">&laquo;</span>'+
-              '</a>'+
-            '</li>').appendTo(pageNavUl);
-        for(var i=1; i<=5; i++){
-            $('<li class="pageNum" ><a href="javascript:void(null)"  pagenum="'+i+'" >'+i+'</a></li>').appendTo(pageNavUl);
-            if(i == targetPage){
-                pageNavUl.children("li.pageNum").last().addClass('active');
-            }
-        }
-        $('<li class="disabled">'+
-                '<a href="javascript:void(null)">...</a>'+
-            '</li>'+
-            '<li class="page-nav-Next">'+
-              '<a href="javascript:void(null)" aria-label="Next"  pagenum="'+pageCount+'" >'+
-                '<span aria-hidden="true">&raquo;</span>'+
-              '</a>'+
-            '</li>').appendTo(pageNavUl);
-        //重写一遍5个翻页按钮 END
-
-        //若是目标页小于3
-        if(targetPage<=3){
-            pageNavUl.children("li.disabled").show();
-            for(var i =0;i<5;i++){
-                pageNavUl.children("li.pageNum").eq(i).children('a').attr({"pagenum":i+1}).html(i+1);
-            }
-            pageNavUl.children("li.pageNum").removeClass('active').eq(targetPage-1).addClass('active');
-            pageNavUl.children("li:last-child").children("a").attr({"pagenum":pageCount});
-        }else if(targetPage>=(pageCount-2)){//若是目标页是倒数3个以内
-            for(var i =0;i<5;i++){
-                pageNavUl.children("li.disabled").hide();
-                pageNavUl.children("li.pageNum").eq(i).children('a').attr({"pagenum":(pageCount-4+i)}).html(pageCount-4+i);
-                if((pageCount-4+i) == targetPage){
-                    pageNavUl.children("li.pageNum").removeClass('active');
-                    pageNavUl.children("li.pageNum").eq(i).addClass('active');
-                }
-            }
-            pageNavUl.children("li:last-child").children("a").attr({"pagenum":pageCount});
-        }else{
-            pageNavUl.children("li.disabled").show();
-            for(var i =0;i<5;i++){
-                pageNavUl.children("li.pageNum").eq(i).children('a').attr({"pagenum":(targetPage-2+i)}).html(targetPage-2+i);
-            }
-            pageNavUl.children("li.pageNum").removeClass('active').eq(2).addClass('active');
-            pageNavUl.children("li:last-child").attr({"pagenum":pageCount});
-        }
-    }
-
-    //给生成的翻页框按钮绑定事件
-    pageNavUl.children('li.pageNum').off("click").on("click",function(event){
-        if($(this).hasClass('active') != true){
-            var clickPage = parseInt($(this).children('a').attr("pagenum"));
-            console.log("pageNum = "+clickPage);
-            //翻页按钮点击后触发的回调函数
-            pageNavFunc(clickPage);
-        }
-    }); 
-    pageNavUl.children('li.page-nav-Prev').off("click").on("click",function(event){
-        var clickPage = parseInt($(this).children('a').attr("pagenum"));
-        console.log("prev = "+clickPage);
-        //翻页按钮点击后触发的回调函数
-        pageNavFunc(clickPage);
-    }); 
-    pageNavUl.children('li.page-nav-Next').off("click").on("click",function(event){
-        var clickPage = parseInt($(this).children('a').attr("pagenum"));
-        console.log("next = "+clickPage);
-        //翻页按钮点击后触发的回调函数
-        pageNavFunc(clickPage);
-    }); 
-    pageNavInput.children('button').off("click").on("click",function(event){
-        var inputVal = parseInt($(this).siblings('input').val());
-        var inputMax = parseInt($(this).siblings('input').attr("max"));
-        console.log("button = "+inputVal);
-        if(inputVal && inputVal<=inputMax){
-            //翻页按钮点击后触发的回调函数
-            pageNavFunc(inputVal);
-        }else{
-
-        }
-    }); 
-    pageNavInput.children('input').off("keydown").on('keydown', function(event) {
-        if(event.which == 13){//若是回车
-            var inputVal = parseInt($(this).val());
-            var inputMax = parseInt($(this).attr("max"));
-            console.log("input = "+inputVal);
-            if(inputVal && inputVal<=inputMax){
-                //翻页事件触发的回调函数
-                pageNavFunc(inputVal);
-            }else{
-
-            }
-        }
-    });
-}
-
 "use strict";
 
 /*props={
-    pageCount:20,//总页数
-    currentPage:2,//当前页
-    perPageNum:10,//每页按钮数
+    pageCount:30,//总页数
+    currentPage:1,//当前页
+    perPageNum:5,//每页按钮数(非必须,默认5)
 }*/
 
 function PageNavCreate(id,props){
@@ -167,7 +28,7 @@ function PageNavCreate(id,props){
                     '</ul>'+
                     '<div class="page-input-box">'+
                         '<input type="text" values=""/>'+
-                        '<button>Go</button>'+
+                        '<button class="btn-green">Go</button>'+
                     '</div>'+
                 '</div>').appendTo($(this.target));
     this.pageNavUl =  $(this.target).find("ul.pagination");

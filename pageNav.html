@@ -20,21 +20,28 @@
             .test-box{
                 padding-left: 20px;
             }
+            .dark-footer{
+                background-color: rgba(18, 101, 148, 0.9);
+            }
         </style>
     </head>
     <body>
         <header>
-            <h2>Page Navigator</h2>
+            <h2>PageNav</h2>
             <h4>Usage</h4>
         </header>
         <p>
+            一:<br />
             pageNav.css <br />
             jquery <br />
             pageNav.js <br />
             将上述3个文件依次引入<br />
-            复制nav的html结构至你的页面中，并给与id<br />
+            二:<br />
+            复制nav的html至你的页面中，并给与id，这个将作为生成分页条的盒子。
+            根据需要可以在Nav中添加/删除 dark 类名来搭配浅色/深色背景。<br />
             <code>&lt;nav aria-label="Page navigation" class="page-nav-outer" id="PageNavId"&gt;&lt;/nav&gt;</code><br />
-            初始化翻页导航:<br />
+            三:<br />
+            生成翻页导航:<br />
             <code>
                 var pageNavObj = null;//用于储存分页对象<br />
                 pageNavObj = new PageNavCreate("PageNavId",{
@@ -42,22 +49,29 @@
                     currentPage:1,
                     perPageNum:5,
                 });<br />
-                pageNavObj.afterClick(pageNavCallBack);<br /><br />
+                pageNavObj.afterClick(pageNavCallBack);<br />
                 /*<br />
                     PageNavId://盒子的id名<br />
                     pageCount://总页数<br />
                     currentPage://当前页<br />
                     perPageNum://每页按钮数(非必须,默认5)<br />
-                    pageNavObj.afterClick()内传入一个在点击按钮后调用的回调函数，回调函数中将会传入当前点击的页码值;<br />
+                    pageNavObj.afterClick()<br />
+                    在这个方法内传入一个在点击翻页按钮后调用的你的回调函数，回调函数中将会传入当前点击的页码值，pageNavCallBack函数的名称和内容根据需要自定;<br />
+                    一般在回调函数中执行AJAX异步请求，然后根据返回的数据，重复步骤三重新生成一个分页条。<br />
                 */<br />
             </code>
 
         </p>
         <div class="test-box">
-            <p>pageCount:<input type="number" value="30" id="testPageCount"></p>
-            <p>currentPage:<input type="number" value="1" id="testCurrentPage"></p>
+            <p>pageCount:<input type="number" value="30" id="testPageCount" required="required"></p>
+            <p>currentPage:<input type="number" value="1" id="testCurrentPage" required="required"></p>
             <p>perPageNum:<input type="number" value="" id="testPerPageNum" placeholder="5"></p>
             <p><input type="button" value="submit"/ id="testBtn"></p>
+            <label for="pageNavStyle">浅色/深色:</label>
+            <select name="style" id="pageNavStyle">
+                <option value="0">Bright</option>
+                <option value="1">Dark</option>
+            </select>
         </div>
         <div class="main-container">
             <ol>
@@ -156,6 +170,18 @@
                     pageNavObj.afterClick(pageNavCallBack);
                 }
             });
+            $("#pageNavStyle").change(function(event) {
+                var selectVal = $(this).val();
+                //console.log(selectVal);
+                if(selectVal==0){
+                    $("#PageNavId").removeClass('dark');
+                    $("footer").removeClass('dark-footer');
+                }else if(selectVal==1){
+                    $("#PageNavId").addClass('dark');
+                    $("footer").addClass('dark-footer');
+                }
+            });
+
         });
         //本示例页的一些js
         function getPageSet(){
