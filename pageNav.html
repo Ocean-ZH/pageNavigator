@@ -33,22 +33,29 @@
             pageNav.js <br />
             将上述3个文件依次引入<br />
             复制nav的html结构至你的页面中，并给与id<br />
-            初始化翻页导航:<br>
+            <code>&lt;nav aria-label="Page navigation" class="page-nav-outer" id="PageNavId"&gt;&lt;/nav&gt;</code><br />
+            初始化翻页导航:<br />
             <code>
-                pageNavCreate(id,pageCountNum,targetPageNum,pageNavFunc);<br>
-                /*
-                    id: 翻页文件容器nav的id;<br />
-                    pageCountNum: 总页数;<br />
-                    targetPageNum: 目标页数;<br />
-                    pageNavFunc: 翻页事件触发后的回调函数,函数中将传入一个targetPage值,回调函数内最后需要更新一遍翻页导航条;<br />
-                    以上四个皆为必须传入的项
+                pageNav = new PageNavCreate("PageNavId",{
+                    pageCount:30,
+                    currentPage:1,
+                    perPageNum:5,
+                });<br />
+                pageNav.afterClick(pageNavCallBack);<br /><br />
+                /*<br />
+                    PageNavId://盒子的id名<br />
+                    pageCount://总页数<br />
+                    currentPage://当前页<br />
+                    perPageNum://每页按钮数(非必须,默认5)<br />
+                    pageNav.afterClick()内传入一个在点击按钮后调用的回调函数，回调函数中将会传入当前点击的页码值;<br />
                 */<br />
             </code>
 
         </p>
         <div class="test-box">
-            <p>pageCountNum:<input type="text" value="200" id="testPageCount"></p>
-            <p>targetPageNum:<input type="text" value="1" id="testTargetCount"></p>
+            <p>pageCount:<input type="number" value="30" id="testPageCount"></p>
+            <p>currentPage:<input type="number" value="1" id="testCurrentPage"></p>
+            <p>perPageNum:<input type="number" value="" id="testPerPageNum" placeholder="5"></p>
             <p><input type="button" value="submit"/ id="testBtn"></p>
         </div>
         <div class="main-container">
@@ -65,10 +72,10 @@
             </ol>
         </div>
         <footer>
-            <nav aria-label="Page navigation" class="page-nav-outer" id="PageNav">
-                <div class="page-nav-inner clearfloat">
+            <nav aria-label="Page navigation" class="page-nav-outer" id="PageNavId">
+                <!-- <div class="page-nav-inner clearfloat">
                     <ul class="pagination">
-                        <!-- <li class="page-nav-Prev">
+                        <li class="page-nav-Prev">
                           <a href="javascript:void(null)" aria-label="Previous" pagenum="1" >
                             <span aria-hidden="true">&laquo;</span>
                           </a>
@@ -85,66 +92,99 @@
                           <a href="javascript:void(null)" aria-label="Next"  pagenum="" >
                             <span aria-hidden="true">&raquo;</span>
                           </a>
-                        </li> -->
+                        </li>
                     </ul>
                     <div class="page-input-box">
                         <input type="text" values=""/>
                         <button>Go</button>
                     </div>
-                </div>
+                </div> -->
             </nav>
         </footer>
     </body>
     <script type="text/javascript">
+        var pageNavObj = null;
         jQuery(document).ready(function($) {
             //初始化
-            pageNavCreate("PageNav",200,1,pageNavFunc);
+            //pageNavCreate("PageNav",200,1,pageNavCallBack);
+            pageNavObj = new PageNavCreate("PageNavId",{
+                pageCount:30,//总页数
+                currentPage:1,//当前页
+                perPageNum:5,//每页按钮数
+            });
+            pageNavObj.afterClick(pageNavCallBack);
         });
 
         //翻页按钮点击后触发的回调函数
-        function pageNavFunc(targetPage){
-            //targetPage是目标页码
-            console.log(targetPage);
-            /*一般来说可以在这里通过targerPage,执行AJAX请求取数来重写页面*/
+        function pageNavCallBack(clickPage){
+            //clickPage是被点击的目标页码
+            //console.log(clickPage);
 
-            /*本页用,自用需删除 Start*/
-            var pageCount = getPageCount();
-            /*本页用,自用需删除 End*/
+            //一般来说可以在这里通过clickPage,执行AJAX请求取数来重写页面
 
             //最后别忘了更新一遍翻页导航栏
-            pageNavCreate("PageNav",pageCount,targetPage,pageNavFunc);
+            //pageNavCreate("PageNav",pageCount,clickPage,pageNavCallBack);
+            pageNavObj = new PageNavCreate("PageNavId",{
+                pageCount:getPageSet().pageCount,//总页数
+                currentPage:clickPage,//当前页
+                perPageNum:getPageSet().perPageNum,//每页按钮数
+            });
+            pageNavObj.afterClick(pageNavCallBack);
         }
+
 
 
 
         //本示例页的一些js
         jQuery(document).ready(function($) {
             $("#testBtn").click(function(event) {
-                var targetPage = parseInt($("#testTargetCount").val());
-                var pageCount = parseInt($("#testPageCount").val());
-                if(!isNaN(targetPage) && !isNaN(pageCount)){
-                    pageNavCreate("PageNav",pageCount,targetPage,pageNavFunc);
-                }
+                pageNavObj = new PageNavCreate("PageNavId",{
+                    pageCount:getPageSet().pageCount,//总页数
+                    currentPage:getPageSet().currentPage,//当前页
+                    perPageNum:getPageSet().perPageNum,//每页按钮数
+                });
+                pageNavObj.afterClick(pageNavCallBack);
             });
             $(".test-box input").keydown(function(event) {
                 if(event.which == 13){
-                    var targetPage = parseInt($("#testTargetCount").val());
-                    var pageCount = parseInt($("#testPageCount").val());
-                    if(!isNaN(targetPage) && !isNaN(pageCount)){
-                        pageNavCreate("PageNav",pageCount,targetPage,pageNavFunc);
-                    }
+                    pageNavObj = new PageNavCreate("PageNavId",{
+                        pageCount:getPageSet().pageCount,//总页数
+                        currentPage:getPageSet().currentPage,//当前页
+                        perPageNum:getPageSet().perPageNum,//每页按钮数
+                    });
+                    pageNavObj.afterClick(pageNavCallBack);
                 }
             });
         });
         //本示例页的一些js
-        function getPageCount(){
-            if($("#testPageCount").val() && !isNaN(parseInt($("#testPageCount").val()))){
-                var pageCount = parseInt($("#testPageCount").val());
-                return pageCount;
-            }else{
-                var pageCount = parseInt($(".page-input-box > input").attr("placeholder"));
-                return pageCount;
+        function getPageSet(){
+            var obj = {
+                pageCount:null,//总页数
+                currentPage:null,//当前页
+                perPageNum:null,//每页按钮数
             }
+            if($("#testPageCount").val() && !isNaN(parseInt($("#testPageCount").val()))){
+                obj.pageCount = parseInt($("#testPageCount").val());
+            }else{
+                obj.pageCount = parseInt($(".page-input-box > input").attr("placeholder"));
+            }
+
+            if($("#testCurrentPage").val() && !isNaN(parseInt($("#testCurrentPage").val()))){
+                obj.currentPage = parseInt($("#testCurrentPage").val());
+                obj.currentPage = (obj.currentPage<=obj.pageCount ? obj.currentPage : obj.pageCount);
+            }else{
+                obj.currentPage = 1;
+            }
+
+
+
+            if($("#testPerPageNum").val() && !isNaN(parseInt($("#testPerPageNum").val()))){
+                obj.perPageNum = parseInt($("#testPerPageNum").val());
+            }else{
+                obj.perPageNum = null;
+            }
+
+            return obj;
         }
         
     </script>

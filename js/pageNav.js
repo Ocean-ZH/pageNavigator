@@ -1,15 +1,16 @@
-//翻页导航生成函数
-/*
-    id: 翻页文件容器nav的id;
-    pageCountNum: 总页数;
-    targetPageNum: 目标页数;
-    pageNavFunc: 翻页事件触发后的回调函数,函数中将传入一个targetPage值,回调函数内最后需要更新一遍翻页导航条;
-    以上四个皆为必须传入的项
-*/
 function pageNavCreate(id,pageCountNum,targetPageNum,pageNavFunc){
     var pageCount = pageCountNum;
     var targetPage = targetPageNum;
     var pageNav = document.getElementById(id);
+    $(pageNav).html("");
+    $('<div class="page-nav-inner clearfloat">'+
+                    '<ul class="pagination">'+
+                    '</ul>'+
+                    '<div class="page-input-box">'+
+                        '<input type="text" values=""/>'+
+                        '<button>Go</button>'+
+                    '</div>'+
+                '</div>').appendTo($(pageNav));
     var pageNavUl =  $(pageNav).find("ul.pagination");
     var pageNavInput = $(pageNav).find(".page-input-box");
     
@@ -134,23 +135,212 @@ function pageNavCreate(id,pageCountNum,targetPageNum,pageNavFunc){
             }
         }
     });
+}
 
+"use strict";
+
+/*props={
+    pageCount:20,//总页数
+    currentPage:2,//当前页
+    perPageNum:10,//每页按钮数
+}*/
+
+function PageNavCreate(id,props){
+    if(id&&props){
+        this.id=id;
+        this.pageCount = props.pageCount,
+        this.currentPage = props.currentPage,
+        this.perPageNum = props.perPageNum || 5,
+        this.perPageNum = (this.perPageNum<3 ? 3 : this.perPageNum);//每页按钮数量最小值不能小于3
+        this.target = document.getElementById(id);
+        this.clickPage = null;
+        this.halfPerPage = 3;
+
+    }else{
+        console.log("请传入正确参数");
+        return false;
+    }
+
+    this.target.innerHTML = "";
+    $('<div class="page-nav-inner clearfloat">'+
+                    '<ul class="pagination">'+
+                    '</ul>'+
+                    '<div class="page-input-box">'+
+                        '<input type="text" values=""/>'+
+                        '<button>Go</button>'+
+                    '</div>'+
+                '</div>').appendTo($(this.target));
+    this.pageNavUl =  $(this.target).find("ul.pagination");
+    this.pageNavInput = $(this.target).find(".page-input-box");
+    
+    //总页数写入placeholder
+    this.pageNavInput.children('input').val("").attr({"placeholder":this.pageCount,"max":this.pageCount});
+
+    //若是总页数小于每页按钮数
+    if(this.pageCount<=this.perPageNum){
+        this.pageNavUl.html("");
+        $('<li class="page-nav-first">'+
+              '<a href="javascript:void(null)" aria-label="First page" pagenum="1" >'+
+                '<span aria-hidden="true">&laquo;</span>'+
+              '</a>'+
+            '</li>'+
+            '<li class="page-nav-prev">'+
+                '<a href="javascript:void(null)" aria-label="Previous" pagenum="'+
+                        (this.currentPage==1 ? 1 : (this.currentPage-1)) +
+                        '" >'+
+                    '<span aria-hidden="true">&lt;</span>'+
+                  '</a>'+
+            '</li>').appendTo(this.pageNavUl);
+
+        for(var i =1; i<=this.pageCount; i++){
+            $('<li class="pageNum" ><a href="javascript:void(null)"  pagenum="'+i+'" >'+i+'</a></li>').appendTo(this.pageNavUl);
+            if(i == this.currentPage){
+                this.pageNavUl.children("li.pageNum").last().addClass('active');
+            }
+        }
+
+        $('<li class="page-nav-next">'+
+              '<a href="javascript:void(null)" aria-label="Last page"  pagenum="'+
+                (this.currentPage==this.pageCount ? this.pageCount : (this.currentPage+1)) +
+                '" >'+
+                '<span aria-hidden="true">&gt;</span>'+
+              '</a>'+
+            '</li>'+
+            '<li class="page-nav-last">'+
+              '<a href="javascript:void(null)" aria-label="Last page"  pagenum="'+this.pageCount+'" >'+
+                '<span aria-hidden="true">&raquo;</span>'+
+              '</a>'+
+            '</li>').appendTo(this.pageNavUl);
+    }else{//总页数大于每页按钮数
+        //重写一遍翻页按钮 START
+        this.pageNavUl.html("");
+        $('<li class="page-nav-first">'+
+              '<a href="javascript:void(null)" aria-label="First page" pagenum="1" >'+
+                '<span aria-hidden="true">&laquo;</span>'+
+              '</a>'+
+            '</li>'+
+            '<li class="page-nav-prev">'+
+                '<a href="javascript:void(null)" aria-label="Previous" pagenum="'+
+                        (this.currentPage==1 ? 1 : (this.currentPage-1)) +
+                        '" >'+
+                    '<span aria-hidden="true">&lt;</span>'+
+                  '</a>'+
+            '</li>').appendTo(this.pageNavUl);
+
+        for(var i=1; i<=this.perPageNum; i++){
+            $('<li class="pageNum" ><a href="javascript:void(null)"  pagenum="'+i+'" >'+i+'</a></li>').appendTo(this.pageNavUl);
+            if(i == this.currentPage){
+                this.pageNavUl.children("li.pageNum").last().addClass('active');
+            }
+        }
+        $('<li class="disabled">'+
+                '<a href="javascript:void(null)">...</a>'+
+            '</li>'+
+            '<li class="page-nav-next">'+
+              '<a href="javascript:void(null)" aria-label="Last page"  pagenum="'+
+                (this.currentPage==this.pageCount ? this.pageCount : (this.currentPage+1)) +
+                '" >'+
+                '<span aria-hidden="true">&gt;</span>'+
+              '</a>'+
+            '</li>'+
+            '<li class="page-nav-last">'+
+              '<a href="javascript:void(null)" aria-label="Last page"  pagenum="'+this.pageCount+'" >'+
+                '<span aria-hidden="true">&raquo;</span>'+
+              '</a>'+
+            '</li>').appendTo(this.pageNavUl);
+        //重写一遍翻页按钮 END
+
+        //若是目标页小于每页按钮数的一半/有余数+1,偶数+1
+        this.halfPerPage = parseInt(this.perPageNum/2)+1;
+        this.lastHalfPage = this.perPageNum%2==0 ? (this.perPageNum/2)-1 : parseInt(this.perPageNum/2);
+        if(this.currentPage<=this.halfPerPage){
+            this.pageNavUl.children("li.disabled").show();
+            for(var i =0;i<this.perPageNum;i++){
+                this.pageNavUl.children("li.pageNum").eq(i).children('a').attr({"pagenum":i+1}).html(i+1);
+            }
+            this.pageNavUl.children("li.pageNum").removeClass('active').eq(this.currentPage-1).addClass('active');
+            this.pageNavUl.children("li:last-child").children("a").attr({"pagenum":this.pageCount});
+        }else if(this.currentPage>=(this.pageCount - this.lastHalfPage)){//若是目标页是倒数每页按钮数一半以内,奇数一半，偶数-1
+            for(var i =0;i<this.perPageNum;i++){
+                this.pageNavUl.children("li.disabled").hide();
+                this.pageNavUl.children("li.pageNum").eq(i).children('a').attr({"pagenum":(this.pageCount-this.perPageNum+1+i)}).html(this.pageCount-this.perPageNum+1+i);
+                if((this.pageCount-this.perPageNum+1+i) == this.currentPage){
+                    this.pageNavUl.children("li.pageNum").removeClass('active');
+                    this.pageNavUl.children("li.pageNum").eq(i).addClass('active');
+                }
+            }
+            this.pageNavUl.children("li:last-child").children("a").attr({"pagenum":this.pageCount});
+        }else{
+            this.pageNavUl.children("li.disabled").show();
+            for(var i =0;i<this.perPageNum;i++){
+                this.pageNavUl.children("li.pageNum").eq(i).children('a').attr({"pagenum":(this.currentPage-parseInt(this.perPageNum/2)+i)}).html(this.currentPage-parseInt(this.perPageNum/2)+i);
+            }
+            this.pageNavUl.children("li.pageNum").removeClass('active').eq(parseInt(this.perPageNum/2)).addClass('active');
+            //this.pageNavUl.children("li:last-child").attr({"pagenum":this.pageCount});
+        }
+    }
 
 }
 
-//生成Loading遮罩
-//flag: 省略 || true >>创建loading遮罩
-//flag: flase >>删除loading遮罩
-function LoadingMaskCreate(flag){
-    if(flag == false){
-        $(".loading-mask").remove();
-    }else{
-        var iHeight = document.documentElement.clientHeight;
-        var documentH = document.body.scrollHeight;
-        $(".loading-mask").remove();
-        $('<div class="loading-mask" style="position:fixed; left:0; top:0; z-index:999; width: 100%; height: 100%; background-color:rgba(0,0,0,.5); ">'+
-                '<img src="images/loading.gif" height="60" width="60" alt="" style="position:absolute; left:50%; top:50%; margin:-30px 0 0 -30px;"/>'+
-            '</div>').prependTo($("body"));
-        $(".loading-mask").height(iHeight);
-    }
+PageNavCreate.prototype.afterClick = function(func){
+    this.pageNavUl.children('li.pageNum').off("click").on("click",function(event){
+        if($(this).hasClass('active') != true){
+            var clickPage = parseInt($(this).children('a').attr("pagenum"));
+            //console.log("pageNum = "+clickPage);
+            //翻页按钮点击后触发的回调函数
+            func(clickPage);
+        }else{
+            return false;
+        }
+    });
+    this.pageNavUl.children('li.page-nav-first').off("click").on("click",function(event){
+        var clickPage = parseInt($(this).children('a').attr("pagenum"));
+        //console.log("prev = "+clickPage);
+        //翻页按钮点击后触发的回调函数
+        func(clickPage);
+    }); 
+    this.pageNavUl.children('li.page-nav-prev').off("click").on("click",function(event){
+        var clickPage = parseInt($(this).children('a').attr("pagenum"));
+        //console.log("prev = "+clickPage);
+        //翻页按钮点击后触发的回调函数
+        func(clickPage);
+    }); 
+    this.pageNavUl.children('li.page-nav-next').off("click").on("click",function(event){
+        var clickPage = parseInt($(this).children('a').attr("pagenum"));
+        //console.log("prev = "+clickPage);
+        //翻页按钮点击后触发的回调函数
+        func(clickPage);
+    }); 
+    this.pageNavUl.children('li.page-nav-last').off("click").on("click",function(event){
+        var clickPage = parseInt($(this).children('a').attr("pagenum"));
+        //console.log("next = "+clickPage);
+        //翻页按钮点击后触发的回调函数
+        func(clickPage);
+    });
+
+    this.pageNavInput.children('button').off("click").on("click",function(event){
+        var inputVal = parseInt($(this).siblings('input').val());
+        var inputMax = parseInt($(this).siblings('input').attr("max"));
+        //console.log("button = "+inputVal);
+        if(inputVal && inputVal<=inputMax){
+            //翻页按钮点击后触发的回调函数
+            func(inputVal);
+        }else{
+            return false;
+        }
+    }); 
+    this.pageNavInput.children('input').off("keydown").on('keydown', function(event) {
+        if(event.which == 13){//若是回车
+            var inputVal = parseInt($(this).val());
+            var inputMax = parseInt($(this).attr("max"));
+            //console.log("input = "+inputVal);
+            if(inputVal && inputVal<=inputMax){
+                //翻页事件触发的回调函数
+                func(inputVal);
+            }else{
+                return false;
+            }
+        }
+    });
+
 }
